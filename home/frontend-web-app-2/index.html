@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Welcome - Farm to Home</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <!--CSS-->
+    <link rel='stylesheet' type='text/css' href='./css/googleMapsApi.css'>
+    <!--Google Api key, Must include to render APIs
+		https://maps.googleapis.com/maps/api/js?key=AIzaSyBTZWJKRnWJPgEBj9VyjFfzWTxl5sEPLkQ&libraries=places&callback=initMap
+		https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=geometry&callback=initMap-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=?&libraries=geometry&callback=initMap"
+        async defer>
+    </script>
+	<style>
+		body
+		{
+		  background-color: rgb(191, 167, 122);
+		  background-image: url("farm_background.jpg");
+		  background-repeat: no-repeat;
+		}
+		.intro
+		{
+		  margin: auto;
+		  width: 80%;
+		  padding-bottom:30px;
+		  padding-left:30px;
+		  padding-right:30px;
+		  padding-top:15px;
+		  background-color: #fffae2;
+		  position:relative;
+		  top:360px;
+		  text-align: center;
+		}
+		.mainPage
+		{
+			padding-left:150px;
+			padding-right:150px;
+			position:relative;
+			top:480px;
+		}
+
+
+		/* Style the button that is used to open and close the collapsible content */
+		.collapsible
+		{
+		  background-color:rgb(247,234,204);
+		  color: black;
+		  cursor: pointer;
+		  padding: 18px;
+		  width: 600px;
+		  border: none;
+		  text-align: left;
+		  outline: none;
+		  font-size: 50px;
+		}
+		/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+		.collapsible:hover
+		{
+		  background-color: rgb(255,204,153);
+		}
+		/* Style the collapsible content. Note: hidden by default */
+		.content
+		{
+			padding: 0 18px;
+			display: none;
+			overflow: hidden;
+			background-color: rgb(247,236,164);
+			width: 564px;
+		}
+		.mapFrame
+		{
+			background-color:rgb(255,255,255);
+			position:relative;
+			top:100px;
+			padding-bottom:100px;
+		}
+		    /**********************************Map CSS*******************/
+		 #map_container{
+			position: relative;
+		 }
+
+		 /* Always set the map height explicitly to define the size of the div
+		 * element that contains the map. */
+		 #map{
+			height: 0;
+			overflow: hidden;
+			padding-bottom: 29.25%;
+			padding-top: 30px;
+			position: relative;
+			border: 1px solid blue;
+			margin-bottom: 25px;
+			}
+
+		  /* Optional: Makes the sample page fill the window.
+		  .controls {
+			margin-top: 10px;
+			border: 1px solid transparent;
+			border-radius: 2px 0 0 2px;
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+			height: 32px;
+			outline: none;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		  }
+		  */
+
+		  /*destination text box*/
+		  #origin-input,
+		  #destination-input {
+			background-color: #fff;
+			font-family: Roboto;
+			font-size: 14px;
+			font-weight: 300;
+			margin-left: 12px;
+			padding: 0 11px 0 13px; /*0 11px 0 13px*/
+			text-overflow: ellipsis;
+			width: 350px; /*200*/
+		  }
+
+		  #origin-input:focus,
+		  #destination-input:focus {
+			border-color: #4d90fe;
+		  }
+
+		  #mode-selector {
+			color: #fff;
+			background-color: #4d90fe;
+			margin-left: 12px;
+			padding: 5px 11px 0px 11px;
+		  }
+
+		  /*
+		  #mode-selector label {
+			font-family: Roboto;
+			font-size: 13px;
+			font-weight: 300;
+		  }
+		  */
+
+		  /**********************************PopUpBubble*******************/
+		  /* The popup bubble styling. */
+		  .popup-bubble {
+			/* Position the bubble centred-above its parent. */
+			position: absolute;
+			top: 0;
+			left: 0;
+			transform: translate(-50%, -100%);
+			/* Style the bubble. */
+			background-color: white;
+			padding: 5px;
+			border-radius: 5px;
+			font-family: sans-serif;
+			overflow-y: auto;
+			max-height: 60px;
+			box-shadow: 0px 2px 10px 1px rgba(0,0,0,0.5);
+		  }
+		  /* The parent of the bubble. A zero-height div at the top of the tip. */
+		  .popup-bubble-anchor {
+			/* Position the div a fixed distance above the tip. */
+			position: absolute;
+			width: 100%;
+			bottom: /* TIP_HEIGHT= */ 8px;
+			left: 0;
+		  }
+		  /* This element draws the tip. */
+		  .popup-bubble-anchor::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			/* Center the tip horizontally. */
+			transform: translate(-50%, 0);
+			/* The tip is a https://css-tricks.com/snippets/css/css-triangle/ */
+			width: 0;
+			height: 0;
+			/* The tip is 8px high, and 12px wide. */
+			border-left: 6px solid transparent;
+			border-right: 6px solid transparent;
+			border-top: /* TIP_HEIGHT= */ 8px solid white;
+		  }
+		  /* JavaScript will position this div at the bottom of the popup tip. */
+		  .popup-container {
+			cursor: auto;
+			height: 0;
+			position: absolute;
+			/* The max width of the info window. */
+			width: 200px;
+		  }
+
+
+		/*********************Google maps Destination container*******************/
+
+		/*This is the searchbox*/
+		#locationField {
+			position: absolute;
+			width: 190px;
+			height: 25px;
+			left: 108px;
+			top: 0px;
+			z-index: 5;
+			background-color: #fff;
+		}
+
+		/*Style the Autocomplete and SearchBox widgets*/
+		/*
+		Go here for more info:
+		https://developers.google.com/maps/documentation/javascript/places-autocomplete#places_searchbox
+		*/
+		.pac-container {
+			background-color: #fff;
+			position: absolute!important;
+			z-index: 1000;
+			border-radius: 2px;
+			border-top: 1px solid #d9d9d9;
+			font-family: Arial, sans-serif;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+			-moz-box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+			overflow: hidden
+		}
+
+		.pac-item {
+			cursor: default;
+			padding: 0 4px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+			line-height: 30px;
+			text-align: left;
+			border-top: 1px solid #C5D8C5;
+			font-size: 11px;
+			color: #999
+		}
+
+		.pac-item:hover {
+			background-color: #8EECC9
+		}
+
+
+	</style>
+</head>
+<body>
+<div class="background">
+	<div class="intro">
+      <h1>Welcome to Farm to Home delivery services!</h1>
+      <br>
+      <p1>Farm to Home delivers vegetables and other produce directly to customers via a self-driving vehicle.
+      Because the vehicle can drive itself and navigate the route between local farms and your home, you can order fresh,
+      reliable produce from the comfort of your home and have it delievered directly to you without ever having to deal with
+      crowded, low-quality supermarkets!
+	</div>
+	<br><br>
+    <div class="mainPage">
+      <button class="collapsible"><img style="vertical-align:middle" src="carrot.png">Carrots (2 lb.) $2.99</button>
+      <div class="content">
+        <p>These carrots come directly from High Valley Farms.<br>
+        	Grown without pesticides or chemical fertilizers,<br>
+            these carrots are sure to be a healthy addition to<br>
+            any meal!</p>
+        <p style="text-align:left; position:relative; left:400px;">
+
+        <label for="quantity">Quantity:</label><br>
+        <input type="number" id="quantity" name="carrot"
+        min="1">
+
+        </p>
+      </div>
+      <div class="mapFrame">
+      	<div class="container">
+
+        	<!--<div id="map_container"></div>
+            <div id="locationField">
+                <input id="destination-input" class="controls" type="text"
+                placeholder="Enter a destination location">
+            </div>
+            <h1>Enter Shipping Destination Below</h1>
+            -->
+
+            <!--TODO: Animate route CTA button Sprint 2
+            <div id="animateBtn">
+                <button onclick="callMyFunction()">Animate Route!</button>
+            </div>
+            Sprint 2 button to animate!-->
+
+            <!--<div id="map_container"></div>-->
+            <div style=" margin-top:100px;background: #F0F0F0; width: 100%; height:100px;">
+                        <h3>Shipping Address:</h3>
+                <input id="destination-input" class="controls" type="text"
+                placeholder="Enter a destination location">
+            </div>
+
+
+            <div id="map"></div>
+
+            <!--Pop-up Content for Wego Vehicle location and waypoint-->
+            <div id="content">
+                WeGo Autonomous Vehicle Location
+            </div>
+            <div id="farmWayPnt">
+                Quick Stop
+            </div>
+        <!--End of Pop-up Content for Wego Vehicle location and waypoint-->
+
+    	</div>
+      </div>
+      <br><br><br><br><br><br><br><br>
+    </div>
+</div>
+
+
+
+<script>
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+
+/*******Create map, A,B markers, PopUp Markers, animation ***********/
+//popup variables
+var popup, Popup;
+
+// Create a map and center it on Austin.
+function initMap() {
+  var map = new google.maps.Map(document.getElementById('map'), {
+	  mapTypeControl: false,
+	  center: {lat: 30.267153, lng: -97.7430608},
+	  zoom: 13
+  });
+
+  //Create marker and bind it to the map
+  var marker = new google.maps.Marker({
+	  map: map,
+	  animation: google.maps.Animation.DROP,
+	  position: new google.maps.LatLng(30.267153,-97.7430608)
+  });
+  marker.addListener('click', toggleBounce);
+  new AutocompleteDirectionsHandler(map);
+
+  //Create popup and bind to map for Autonomous Vehicle Supply location
+  Popup = createPopupClass();
+  popup = new Popup(
+  //Autonomous Vehicle Supply
+  new google.maps.LatLng(30.267153, -97.7430608),
+  document.getElementById('content'));
+  popup.setMap(map);
+
+   //Create popup and bind to map for Farm location
+  Popup = createPopupClass();
+  popup = new Popup(
+  //Farm waypoint location
+  new google.maps.LatLng(30.233516, -97.748728),
+  document.getElementById('farmWayPnt'));
+  popup.setMap(map);
+}
+
+//Toggle the marker with animation
+function toggleBounce() {
+  if (marker.getAnimation() !== null) {
+	  marker.setAnimation(null);
+  } else {
+	  marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+}
+
+/*popup function and calls
+* Returns the Popup class.
+* Unfortunately, the Popup class can only be defined after
+* google.maps.OverlayView is defined, when the Maps API is loaded.
+* This function should be called by initMap.*/
+function createPopupClass()
+{
+
+  /**A customized popup on the map.
+  * @param {!google.maps.LatLng} position
+  * @param {!Element} content The bubble div.
+  * @constructor
+  * @extends {google.maps.OverlayView}*/
+  function Popup(position, content) {
+	  this.position = position;
+
+	  content.classList.add('popup-bubble');
+
+	  // This zero-height div is positioned at the bottom of the bubble.
+	  var bubbleAnchor = document.createElement('div');
+	  bubbleAnchor.classList.add('popup-bubble-anchor');
+	  bubbleAnchor.appendChild(content);
+
+	  // This zero-height div is positioned at the bottom of the tip.
+	  this.containerDiv = document.createElement('div');
+	  this.containerDiv.classList.add('popup-container');
+	  this.containerDiv.appendChild(bubbleAnchor);
+
+	  // Optionally stop clicks, etc., from bubbling up to the map.
+	  google.maps.OverlayView.preventMapHitsAndGesturesFrom(this.containerDiv);
+  }//End function Popup()
+
+  // ES5 magic to extend google.maps.OverlayView.
+  Popup.prototype = Object.create(google.maps.OverlayView.prototype);
+
+  /** Called when the popup is added to the map. */
+  Popup.prototype.onAdd = function()
+  {
+	  this.getPanes().floatPane.appendChild(this.containerDiv);
+  };
+
+  /** Called when the popup is removed from the map. */
+  Popup.prototype.onRemove = function()
+  {
+	  if (this.containerDiv.parentElement)
+	  {
+		  this.containerDiv.parentElement.removeChild(this.containerDiv);
+	  }
+  };
+
+  /** Called each frame when the popup needs to draw itself. */
+  Popup.prototype.draw = function()
+  {
+	  var divPosition = this.getProjection().fromLatLngToDivPixel(this.position);
+
+	  // Hide the popup when it is far out of view.
+	  var display =
+	  Math.abs(divPosition.x) < 4000 && Math.abs(divPosition.y) < 4000 ?
+	  'block' :
+	  'none';
+
+	  if (display === 'block')
+	  {
+		  this.containerDiv.style.left = divPosition.x + 'px';
+		  this.containerDiv.style.top = divPosition.y + 'px';
+	  }
+	  if (this.containerDiv.style.display !== display)
+	  {
+		  this.containerDiv.style.display = display;
+	  }
+  };
+  return Popup;
+}//end createPopupClass()
+
+/*****************AutoComplete and Direction Handlers ******************/
+ /**
+  * @constructor
+ */
+
+//TODO: Route Animation vars for Sprint 2:
+var autoDriveSteps = new Array();
+var speedFactor = 10; // 10x faster animated drive
+
+//AutoComplete Handler
+function AutocompleteDirectionsHandler(map)
+{
+  this.map = map;
+  this.destinationPlaceId = null;
+  this.travelMode = 'DRIVING';
+  var destinationInput = document.getElementById('destination-input');
+  this.directionsService = new google.maps.DirectionsService;
+  this.directionsDisplay = new google.maps.DirectionsRenderer;
+  this.directionsDisplay.setMap(map);
+
+  var destinationAutocomplete = new google.maps.places.Autocomplete(
+	  destinationInput, {placeIdOnly: true});
+
+  this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
+
+  //Do NOT Delete!
+  //This binds the location seachbox inside the map container
+  //this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
+}
+
+// Sets a listener on a radio button to change the filter type on Places
+// Autocomplete.
+AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, mode)
+{
+  var radioButton = document.getElementById(id);
+  var me = this;
+  radioButton.addEventListener('click', function()
+  {
+	me.travelMode = mode;
+	me.route();
+  });
+};
+
+// Sets a listener type on Places
+// Autocomplete.
+AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode)
+{
+  var me = this;
+  autocomplete.bindTo('bounds', this.map);
+  autocomplete.addListener('place_changed', function()
+  {
+	var place = autocomplete.getPlace();
+	if (!place.place_id)
+	{
+	  window.alert("Please select an option from the dropdown list.");
+	  return;
+	}
+	me.destinationPlaceId = place.place_id;
+	me.route();
+  });
+};
+
+// Route the directions and pass the response.
+//Added waypoint for farm to customer destination.
+//Need to delete waypoints,location frm below for Rent-A-Swag
+AutocompleteDirectionsHandler.prototype.route = function()
+{
+  if (!this.destinationPlaceId)
+  {
+	return;
+  }
+  var me = this;
+
+  //Origin is location for atonomous vehicle service provider.
+  //Destination is address for customer
+  this.directionsService.route(
+  {
+	  origin: new google.maps.LatLng(30.267153, -97.7430608),
+	  destination: {'placeId': this.destinationPlaceId},
+	  //Waypoints,location are not needed for Rent-A-Swag
+	  waypoints: [{stopover: false,
+	  location: new google.maps.LatLng(30.233516, -97.748728)}],
+		travelMode: this.travelMode
+  },
+  function(response, status)
+  {
+	  if (status === 'OK')
+	  {
+		  me.directionsDisplay.setDirections(response);
+		  //Get distance
+		  var d = response.routes[0].legs[0].distance.text;
+		  //show the distance at some div with pop up alert!
+		  window.alert('We will make a stop for your items. You are ' + d + 'les away from your order.');
+
+		  //TODO: ADDED TO TEST ANIMATION
+		  startRouteAnimation(lineSymbol);
+
+
+
+	  } else
+	  {
+		  window.alert('Directions request failed due to ' + status);
+	  }
+  });
+};
+
+
+/***************************Route Animation *****************************/
+
+//Create marker
+marker=new google.maps.Marker({map:map,icon:"http://maps.google.com/mapfiles/ms/micons/blue.png"})
+
+function callMyFunction()
+{
+  startRouteAnimation(marker);
+}
+
+function setAnimatedRoute(origin, destination, map)
+{
+  // init routing services
+  var directionsService = new google.maps.DirectionsService;
+  var directionsRenderer = new google.maps.DirectionsRenderer
+  ({
+	  map: map
+  });
+
+  //calculate route
+  directionsService.route
+  ({
+	  origin: origin,
+	  destination: destination,
+	  travelMode: google.maps.TravelMode.DRIVING
+  },
+	  function(response, status)
+	  {
+		  if (status == google.maps.DirectionsStatus.OK)
+		  {
+			// display the route
+			directionsRenderer.setDirections(response);
+
+			// calculate positions for the animation steps
+			// the result is an array of LatLng, stored in autoDriveSteps
+			autoDriveSteps = new Array();
+			var remainingSeconds = 0;
+			// supporting single route, single legs currently
+			var leg = response.routes[0].legs[0];
+			leg.steps.forEach(function(step)
+			{
+			  var stepSeconds = step.duration.value;
+			  var nextStopSeconds = speedFactor - remainingSeconds;
+			  while (nextStopSeconds <= stepSeconds)
+			  {
+				var nextStopLatLng = getPointBetween(step.start_location, step.end_location, nextStopSeconds / stepSeconds);
+				autoDriveSteps.push(nextStopLatLng);
+				nextStopSeconds += speedFactor;
+			  }
+			  remainingSeconds = stepSeconds + speedFactor - nextStopSeconds;
+			});
+		  if (remainingSeconds > 0)
+		  {
+			  autoDriveSteps.push(leg.end_location);
+		  }
+		  } else {
+		  window.alert('Directions request failed due to ' + status);
+		  }
+	  }
+  );
+}
+
+// helper method to calculate a point between A and B at some ratio
+function getPointBetween(a, b, ratio)
+{
+  return new google.maps.LatLng(a.lat() + (b.lat() - a.lat()) * ratio, a.lng() + (b.lng() - a.lng()) * ratio);
+}
+
+// start the route simulation
+function startRouteAnimation(marker)
+{
+  var autoDriveTimer = setInterval(function () {
+	  // stop the timer if the route is finished
+	  if (autoDriveSteps.length === 0)
+	  {
+		  clearInterval(autoDriveTimer);
+	  }
+	  else
+	  {
+		  // move marker to the next position (always the first in the array)
+		  marker.setPosition(autoDriveSteps[0]);
+		  // remove the processed position
+		  autoDriveSteps.shift();
+	  }
+  },
+  1000);
+}
+</script>
+</body>
+</html>

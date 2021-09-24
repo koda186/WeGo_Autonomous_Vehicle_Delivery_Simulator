@@ -1,0 +1,225 @@
+body
+{
+  background-color: rgb(191, 167, 122);
+  background-image: url("farm_background.jpg");
+  background-repeat: no-repeat;
+}
+.intro
+{
+  margin: auto;
+  width: 80%;
+  padding-bottom:30px;
+  padding-left:30px;
+  padding-right:30px;
+  padding-top:15px;
+  background-color: #fffae2;
+  position:relative;
+  top:360px;
+  text-align: center;
+}
+.mainPage
+{
+  padding-left:150px;
+  padding-right:150px;
+  position:relative;
+  top:480px;
+}
+
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible
+{
+  background-color:rgb(247,234,204);
+  color: black;
+  cursor: pointer;
+  padding: 18px;
+  width: 600px;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 50px;
+}
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.collapsible:hover
+{
+  background-color: rgb(255,204,153);
+}
+/* Style the collapsible content. Note: hidden by default */
+.content
+{
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: rgb(247,236,164);
+  width: 564px;
+}
+.mapFrame
+{
+  background-color:rgb(255,255,255);
+  position:relative;
+  top:100px;
+  padding-bottom:100px;
+}
+    /**********************************Map CSS*******************/
+ #map_container{
+  position: relative;
+ }
+
+ /* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+ #map{
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 29.25%;
+  padding-top: 30px;
+  position: relative;
+  border: 1px solid blue;
+  margin-bottom: 25px;
+  }
+
+  /* Optional: Makes the sample page fill the window.
+  .controls {
+  margin-top: 10px;
+  border: 1px solid transparent;
+  border-radius: 2px 0 0 2px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 32px;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  }
+  */
+
+  /*destination text box*/
+  #origin-input,
+  #destination-input {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 300;
+  margin-left: 12px;
+  padding: 0 11px 0 13px; /*0 11px 0 13px*/
+  text-overflow: ellipsis;
+  width: 350px; /*200*/
+  }
+
+  #origin-input:focus,
+  #destination-input:focus {
+  border-color: #4d90fe;
+  }
+
+  #mode-selector {
+  color: #fff;
+  background-color: #4d90fe;
+  margin-left: 12px;
+  padding: 5px 11px 0px 11px;
+  }
+
+  /*
+  #mode-selector label {
+  font-family: Roboto;
+  font-size: 13px;
+  font-weight: 300;
+  }
+  */
+
+  /**********************************PopUpBubble*******************/
+  /* The popup bubble styling. */
+  .popup-bubble {
+  /* Position the bubble centred-above its parent. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -100%);
+  /* Style the bubble. */
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-family: sans-serif;
+  overflow-y: auto;
+  max-height: 60px;
+  box-shadow: 0px 2px 10px 1px rgba(0,0,0,0.5);
+  }
+  /* The parent of the bubble. A zero-height div at the top of the tip. */
+  .popup-bubble-anchor {
+  /* Position the div a fixed distance above the tip. */
+  position: absolute;
+  width: 100%;
+  bottom: /* TIP_HEIGHT= */ 8px;
+  left: 0;
+  }
+  /* This element draws the tip. */
+  .popup-bubble-anchor::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Center the tip horizontally. */
+  transform: translate(-50%, 0);
+  /* The tip is a https://css-tricks.com/snippets/css/css-triangle/ */
+  width: 0;
+  height: 0;
+  /* The tip is 8px high, and 12px wide. */
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: /* TIP_HEIGHT= */ 8px solid white;
+  }
+  /* JavaScript will position this div at the bottom of the popup tip. */
+  .popup-container {
+  cursor: auto;
+  height: 0;
+  position: absolute;
+  /* The max width of the info window. */
+  width: 200px;
+  }
+
+
+/*********************Google maps Destination container*******************/
+
+/*This is the searchbox*/
+#locationField {
+  position: absolute;
+  width: 190px;
+  height: 25px;
+  left: 108px;
+  top: 0px;
+  z-index: 5;
+  background-color: #fff;
+}
+
+/*Style the Autocomplete and SearchBox widgets*/
+/*
+Go here for more info:
+https://developers.google.com/maps/documentation/javascript/places-autocomplete#places_searchbox
+*/
+.pac-container {
+  background-color: #fff;
+  position: absolute!important;
+  z-index: 1000;
+  border-radius: 2px;
+  border-top: 1px solid #d9d9d9;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden
+}
+
+.pac-item {
+  cursor: default;
+  padding: 0 4px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 30px;
+  text-align: left;
+  border-top: 1px solid #C5D8C5;
+  font-size: 11px;
+  color: #999
+}
+
+.pac-item:hover {
+  background-color: #8EECC9
+}
